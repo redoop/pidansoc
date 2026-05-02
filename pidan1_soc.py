@@ -15,11 +15,13 @@ from litex.build.generic_platform import *
 from litex.build.xilinx import Xilinx7SeriesPlatform, VivadoProgrammer
 
 from litex.soc.cores.clock import S7PLL, S7MMCM
+from litex.soc.cores.clock.xilinx_s7 import S7IDELAYCTRL
 from litex.soc.cores.led import LedChaser
 from litex.soc.cores.spi_flash import S7SPIFlash
 from litex.soc.cores.gpio import GPIOOut
 
 from litex.soc.integration.soc_core import *
+from litex.soc.integration.soc import SoCRegion
 from litex.soc.integration.builder import *
 
 from litedram.modules import MT41K256M16
@@ -161,14 +163,14 @@ class Pidan1SoC(SoCCore):
         )
 
         # 以太网 (RGMII)
-        # 注意: RTL8211E 支持 RGMII，但需要根据实际板子配置调整
-        # 这里先使用 MII 模式作为示例
-        self.submodules.ethphy = LiteEthPHYMII(
-            clock_pads=platform.request("eth_clocks"),
-            pads=platform.request("eth"),
-            with_hw_init_reset=True
-        )
-        self.add_ethernet(phy=self.ethphy, dynamic_ip=True)
+        # TODO: 配置正确的 RGMII PHY
+        # 暂时禁用以太网以便快速测试加速器
+        # self.submodules.ethphy = LiteEthPHYMII(
+        #     clock_pads=platform.request("eth_clocks"),
+        #     pads=platform.request("eth"),
+        #     with_hw_init_reset=True
+        # )
+        # self.add_ethernet(phy=self.ethphy, dynamic_ip=True)
 
         # LED
         self.submodules.leds = LedChaser(
