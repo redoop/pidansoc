@@ -36,78 +36,56 @@ from bitnet_accel_litex import BitNetAccel
 
 # MicroPhase Artix-7 200T 平台定义
 _io = [
-    # 时钟 (50MHz)
-    ("clk50", 0, Pins("U18"), IOStandard("LVCMOS33")),
+    # 时钟 (50MHz) - 基于官方文档
+    ("clk50", 0, Pins("J19"), IOStandard("LVCMOS33")),
 
-    # LED
-    ("user_led", 0, Pins("J17"), IOStandard("LVCMOS33")),
-    ("user_led", 1, Pins("L14"), IOStandard("LVCMOS33")),
-    ("user_led", 2, Pins("L15"), IOStandard("LVCMOS33")),
-    ("user_led", 3, Pins("L16"), IOStandard("LVCMOS33")),
+    # LED - 基于官方文档
+    ("user_led", 0, Pins("M18"), IOStandard("LVCMOS33")),  # LED1
+    ("user_led", 1, Pins("N18"), IOStandard("LVCMOS33")),  # LED2
 
-    # 串口 (CH340 USB-UART)
+    # 串口 (CH340 USB-UART) - 基于官方文档
     ("serial", 0,
-        Subsignal("tx", Pins("M19")),
-        Subsignal("rx", Pins("M20")),
+        Subsignal("tx", Pins("V2")),
+        Subsignal("rx", Pins("U2")),
         IOStandard("LVCMOS33")
     ),
 
-    # DDR3 SDRAM (MT41K256M16, 512MB)
+    # DDR3 SDRAM (MT41K256M16, 256M × 16bit, 512MB)
+    # 基于官方文档的正确引脚定义
     ("ddram", 0,
         Subsignal("a", Pins(
-            "M4 J3 J4 H3 H4 F3 G3 G1",
-            "H1 H2 J5 K5 K1 K2"),
+            "P1 M6 K3 K4 M5 J6 N2 K6",
+            "P2 L1 M2 P6 L4 L5 N5"),
             IOStandard("SSTL15")),
-        Subsignal("ba", Pins("M5 L6 L5"), IOStandard("SSTL15")),
-        Subsignal("ras_n", Pins("L4"), IOStandard("SSTL15")),
-        Subsignal("cas_n", Pins("M1"), IOStandard("SSTL15")),
-        Subsignal("we_n", Pins("K3"), IOStandard("SSTL15")),
-        Subsignal("cs_n", Pins("N3"), IOStandard("SSTL15")),
-        Subsignal("dm", Pins("F4 E1"), IOStandard("SSTL15")),
+        Subsignal("ba", Pins("J4 R1 M1"), IOStandard("SSTL15")),
+        Subsignal("ras_n", Pins("M3"), IOStandard("SSTL15")),
+        Subsignal("cas_n", Pins("N3"), IOStandard("SSTL15")),
+        Subsignal("we_n", Pins("L6"), IOStandard("SSTL15")),
+        Subsignal("dm", Pins("E2 H3"), IOStandard("SSTL15")),
         Subsignal("dq", Pins(
-            "E3 D3 E6 D5 F5 E5 F1 E2",
-            "B1 A1 B2 C1 C2 B3 A3 C3"),
+            "B2 F1 B1 D2 C2 F3 A1 G1",
+            "J5 G2 K1 G3 H2 H5 J1 H4"),
             IOStandard("SSTL15"),
             Misc("IN_TERM=UNTUNED_SPLIT_40")),
-        Subsignal("dqs_p", Pins("D1 C4"),
+        Subsignal("dqs_p", Pins("E1 K2"),
             IOStandard("DIFF_SSTL15"),
             Misc("IN_TERM=UNTUNED_SPLIT_40")),
-        Subsignal("dqs_n", Pins("D2 C5"),
+        Subsignal("dqs_n", Pins("D1 J2"),
             IOStandard("DIFF_SSTL15"),
             Misc("IN_TERM=UNTUNED_SPLIT_40")),
-        Subsignal("clk_p", Pins("J1"), IOStandard("DIFF_SSTL15")),
-        Subsignal("clk_n", Pins("K1"), IOStandard("DIFF_SSTL15")),
-        Subsignal("cke", Pins("M2"), IOStandard("SSTL15")),
-        Subsignal("odt", Pins("N4"), IOStandard("SSTL15")),
-        Subsignal("reset_n", Pins("N1"), IOStandard("SSTL15")),
+        Subsignal("clk_p", Pins("P5"), IOStandard("DIFF_SSTL15")),
+        Subsignal("clk_n", Pins("P4"), IOStandard("DIFF_SSTL15")),
+        Subsignal("cke", Pins("N4"), IOStandard("SSTL15")),
+        Subsignal("odt", Pins("L3"), IOStandard("SSTL15")),
+        Subsignal("reset_n", Pins("F4"), IOStandard("SSTL15")),
         Misc("SLEW=FAST"),
     ),
 
-    # 以太网 RGMII (RTL8211E)
-    ("eth_clocks", 0,
-        Subsignal("tx", Pins("AA14")),
-        Subsignal("rx", Pins("V13")),
-        IOStandard("LVCMOS33")
-    ),
-    ("eth", 0,
-        Subsignal("rst_n", Pins("U17")),
-        Subsignal("mdio", Pins("W18")),
-        Subsignal("mdc", Pins("W19")),
-        Subsignal("rx_ctl", Pins("V14")),
-        Subsignal("rx_data", Pins("V15 U15 U14 T14")),
-        Subsignal("tx_ctl", Pins("AB14")),
-        Subsignal("tx_data", Pins("AB15 AB16 AA15 AA16")),
-        IOStandard("LVCMOS33")
-    ),
+    # 以太网 (RTL8211F) - 暂时禁用，待后续配置 GMII 接口
+    # TODO: 添加 RTL8211F GMII 引脚定义
 
-    # SPI Flash (用于 bitstream 和 boot 镜像)
-    ("spiflash", 0,
-        Subsignal("cs_n", Pins("T19")),
-        Subsignal("clk", Pins("L12")),
-        Subsignal("mosi", Pins("P22")),
-        Subsignal("miso", Pins("R22")),
-        IOStandard("LVCMOS33")
-    ),
+    # SPI Flash (IS25L128F-JBLE, 128MB) - 暂时禁用
+    # TODO: 添加正确的 SPI Flash 引脚定义
 ]
 
 
