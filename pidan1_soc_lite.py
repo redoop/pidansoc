@@ -26,20 +26,19 @@ from bitnet_accel_litex import BitNetAccel
 
 
 # 最小化平台定义 - 只包含基本 IO
+# 引脚基于 MicroPhase A7-Lite 官方文档
 _io = [
-    # 时钟 (50MHz)
-    ("clk50", 0, Pins("U18"), IOStandard("LVCMOS33")),
+    # 时钟 (50MHz) - 基于官方文档
+    ("clk50", 0, Pins("J19"), IOStandard("LVCMOS33")),
 
-    # LED
-    ("user_led", 0, Pins("J17"), IOStandard("LVCMOS33")),
-    ("user_led", 1, Pins("L14"), IOStandard("LVCMOS33")),
-    ("user_led", 2, Pins("L15"), IOStandard("LVCMOS33")),
-    ("user_led", 3, Pins("L16"), IOStandard("LVCMOS33")),
+    # LED - 基于官方文档
+    ("user_led", 0, Pins("M18"), IOStandard("LVCMOS33")),  # LED1
+    ("user_led", 1, Pins("N18"), IOStandard("LVCMOS33")),  # LED2
 
-    # 串口 (CH340 USB-UART)
+    # 串口 (CH340 USB-UART) - 基于官方文档
     ("serial", 0,
-        Subsignal("tx", Pins("M19")),
-        Subsignal("rx", Pins("M20")),
+        Subsignal("tx", Pins("V2")),
+        Subsignal("rx", Pins("U2")),
         IOStandard("LVCMOS33")
     ),
 ]
@@ -60,6 +59,9 @@ class Platform(Xilinx7SeriesPlatform):
     def do_finalize(self, fragment):
         Xilinx7SeriesPlatform.do_finalize(self, fragment)
         self.add_period_constraint(self.lookup_request("clk50", loose=True), 1e9/50e6)
+        # 允许非 CCIO 引脚用作时钟输入
+        # J19 不是 Clock Capable IO，需要此约束
+        self.add_platform_command("set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets clk50_IBUF]")
 
 
 # Pidan1 Lite SoC - 简化版
