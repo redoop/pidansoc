@@ -1,0 +1,82 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# LiteX build outputs
+build/
+*.csv
+csr.csv
+csr.json
+analyzer.csv
+
+# 允许配置文件
+!images-litex.json
+
+# Vivado
+*.jou
+*.log
+*.str
+*.xpr
+*.cache/
+*.hw/
+*.ip_user_files/
+*.runs/
+*.sim/
+*.srcs/
+*.gen/
+.Xil/
+vivado*.backup.*
+*.bit
+*.mcs
+*.prm
+
+# 允许 boot-images 目录中的 .bin 文件
+!boot-images/*.bin
+
+# 临时文件
+*.swp
+*.swo
+*~
+.DS_Store
+*.tmp
+/tmp/
+
+# 编译产物
+bitnet_test
+*.o
+*.elf
+*.a
+
+# 引导镜像（保存在 boot-images/ 子目录中）
+# boot-images/ 目录已包含所需的引导镜像，不被忽略
+
+# 忽略根目录下的临时镜像文件
+/opensbi.bin
+/Image
+/rootfs.cpio
+/*.dtb
+/emulator.bin
+/emulator-*.bin
+
+# 仿真
+*.vcd
+*.fst
+*.ghw
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# 文档
+doc/_build/
+*.pdf
